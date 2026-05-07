@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import '../styles/LandingPage.css';
+import Forms from './Forms';
 
 
 const LandingPage = ({ onAuditComplete }) => {
@@ -37,7 +38,8 @@ const LandingPage = ({ onAuditComplete }) => {
       </header>
 
       {/* The Form - Now on the Landing Page */}
-      <section className="form-container" id="audit-form">
+      <Forms/>
+      {/* <section className="form-container" id="audit-form">
         <div className="form-card">
           <h2 className="form-heading">Calculate Your Savings</h2>
           <form onSubmit={handleSubmit}>
@@ -96,7 +98,7 @@ const LandingPage = ({ onAuditComplete }) => {
             <p className="form-footer">No credit card required. Free forever.</p>
           </form>
         </div>
-      </section>
+      </section> */}
     </div>
   );
 };
