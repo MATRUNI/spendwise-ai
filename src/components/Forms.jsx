@@ -3,17 +3,39 @@ import { Plus, Trash2, Cpu, Users, DollarSign, Briefcase } from 'lucide-react';
 import '../styles/LandingPage.css';
 
 const Forms = ({ onAuditComplete }) => {
-  const [teamSize, setTeamSize] = useState('');
-  const [tools, setTools] = useState([
-    { 
-      id: Date.now(), 
-      name: 'ChatGPT', 
-      plan: 'Pro', 
-      spend: '', 
-      seats: '', 
-      useCase: 'General Productivity' 
+  const [teamSize, setTeamSize] = useState(() => {
+    const saved = localStorage.getItem('spendwise_teamSize');
+    return saved !== null ? JSON.parse(saved) : '';
+  });
+
+  const [tools, setTools] = useState(() => {
+    const saved = localStorage.getItem('spendwise_tools');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Failed to parse tools from localStorage");
+      }
     }
-  ]);
+    return [
+      { 
+        id: Date.now(), 
+        name: 'ChatGPT', 
+        plan: 'Pro', 
+        spend: '', 
+        seats: '', 
+        useCase: 'General Productivity' 
+      }
+    ];
+  });
+
+  React.useEffect(() => {
+    localStorage.setItem('spendwise_teamSize', JSON.stringify(teamSize));
+  }, [teamSize]);
+
+  React.useEffect(() => {
+    localStorage.setItem('spendwise_tools', JSON.stringify(tools));
+  }, [tools]);
 
   const addTool = () => {
     setTools([
