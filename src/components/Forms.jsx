@@ -82,6 +82,7 @@ const Forms = ({ onAuditComplete }) => {
               type="number" 
               placeholder="e.g. 25"
               value={teamSize}
+              min={1}
               onChange={(e) => setTeamSize(e.target.value)}
               required
             />
@@ -136,6 +137,7 @@ const Forms = ({ onAuditComplete }) => {
                       type="number" 
                       placeholder="Amount" 
                       value={tool.spend} 
+                      min={1}
                       onChange={(e) => updateTool(tool.id, 'spend', e.target.value)}
                       required
                     />
@@ -147,6 +149,7 @@ const Forms = ({ onAuditComplete }) => {
                       type="number" 
                       placeholder="Quantity" 
                       value={tool.seats} 
+                      min={1}
                       onChange={(e) => updateTool(tool.id, 'seats', e.target.value)}
                       required
                     />
