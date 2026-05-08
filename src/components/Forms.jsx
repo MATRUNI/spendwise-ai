@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Cpu, Users, DollarSign, Briefcase } from 'lucide-react';
 import { AI_TOOLS, getPlansForTool } from '../utils/pricingData';
-import '../styles/LandingPage.css';
+import '../styles/Forms.css';
 
 const Forms = ({ onAuditComplete }) => {
   const [teamSize, setTeamSize] = useState(() => {
