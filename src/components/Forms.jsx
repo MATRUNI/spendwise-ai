@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Cpu, Users, DollarSign, Briefcase } from 'lucide-react';
+import { AI_TOOLS, getPlansForTool } from '../utils/pricingData';
 import '../styles/LandingPage.css';
 
 const Forms = ({ onAuditComplete }) => {
@@ -21,19 +22,19 @@ const Forms = ({ onAuditComplete }) => {
       { 
         id: Date.now(), 
         name: 'ChatGPT', 
-        plan: 'Pro', 
+        plan: 'Plus', 
         spend: '', 
         seats: '', 
-        useCase: 'General Productivity' 
+        useCase: 'coding' 
       }
     ];
   });
 
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem('spendwise_teamSize', JSON.stringify(teamSize));
   }, [teamSize]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     localStorage.setItem('spendwise_tools', JSON.stringify(tools));
   }, [tools]);
 
@@ -46,7 +47,7 @@ const Forms = ({ onAuditComplete }) => {
         plan: 'Pro', 
         spend: '', 
         seats: '', 
-        useCase: 'Software Engineering' 
+        useCase: 'writing' 
       }
     ]);
   };
@@ -58,7 +59,17 @@ const Forms = ({ onAuditComplete }) => {
   };
 
   const updateTool = (id, field, value) => {
-    setTools(tools.map(t => t.id === id ? { ...t, [field]: value } : t));
+    setTools(tools.map(t => {
+      if (t.id === id) {
+        const updated = { ...t, [field]: value };
+        // Auto-select the first available plan when changing tools
+        if (field === 'name') {
+          updated.plan = getPlansForTool(value)[0]?.name || '';
+        }
+        return updated;
+      }
+      return t;
+    }));
   };
 
   const handleSubmit = (e) => {
@@ -104,30 +115,29 @@ const Forms = ({ onAuditComplete }) => {
                   <div className="field">
                     <label><Cpu size={14} /> AI Tool</label>
                     <select value={tool.name} onChange={(e) => updateTool(tool.id, 'name', e.target.value)}>
-                      <option value="ChatGPT">ChatGPT</option>
-                      <option value="Claude">Claude</option>
-                      <option value="Cursor">Cursor</option>
-                      <option value="OpenAI API">OpenAI API</option>
-                      <option value="Perplexity">Perplexity</option>
+                      {AI_TOOLS.map(ai => (
+                        <option key={ai.name} value={ai.name}>{ai.name}</option>
+                      ))}
                     </select>
                   </div>
 
                   <div className="field">
                     <label><Briefcase size={14} /> Primary Use Case</label>
                     <select value={tool.useCase} onChange={(e) => updateTool(tool.id, 'useCase', e.target.value)}>
-                      <option value="General Productivity">General Productivity</option>
-                      <option value="Software Engineering">Software Engineering</option>
-                      <option value="Marketing & Copy">Marketing & Copy</option>
-                      <option value="Research">Research</option>
+                      <option value="coding">Coding</option>
+                      <option value="writing">Writing</option>
+                      <option value="data">Data</option>
+                      <option value="research">Research</option>
+                      <option value="mixed">Mixed</option>
                     </select>
                   </div>
 
                   <div className="field">
                     <label>Plan</label>
                     <select value={tool.plan} onChange={(e) => updateTool(tool.id, 'plan', e.target.value)}>
-                      <option value="Pro">Individual / Pro</option>
-                      <option value="Team">Team</option>
-                      <option value="Enterprise">Enterprise</option>
+                      {getPlansForTool(tool.name).map(p => (
+                        <option key={p.name} value={p.name}>{p.name}</option>
+                      ))}
                     </select>
                   </div>
 
