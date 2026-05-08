@@ -29,7 +29,8 @@ export const AI_TOOLS = [
       { name: "Max", price: 100, billing: "monthly" },
       { name: "Team (Standard)", price: 20, billing: "monthly" },
       { name: "Team (Premium)", price: 100, billing: "monthly" },
-      { name: "Enterprise", price: 20, billing: "monthly" }
+      { name: "Enterprise", price: 20, billing: "monthly" },
+      { name: "Enterprise", price: 0, billing: "custom" }
     ]
   },
   {
@@ -52,7 +53,8 @@ export const AI_TOOLS = [
       { name: "Ultra", price: 249.99, billing: "monthly" },
       { name: "Base", price: 1.19, billing: "monthly" },
       { name: "Starter", price: 3.23, billing: "monthly" },
-      { name: "Standard", price: 10.35, billing: "monthly" }
+      { name: "Standard", price: 10.35, billing: "monthly" },
+      { name: "Enterprise", price: 0, billing: "custom" }
     ]
   },
   {
@@ -61,14 +63,16 @@ export const AI_TOOLS = [
       { name: "Free", price: 0, billing: "monthly" },
       { name: "Pro", price: 20, billing: "monthly" },
       { name: "Max", price: 200, billing: "monthly" },
-      { name: "Team (Yearly)", price: 40, billing: "yearly" }
+      { name: "Team (Yearly)", price: 40, billing: "yearly" },
+      { name: "Enterprise", price: 0, billing: "custom" }
     ]
   },
   {
     name: "v0",
     plans: [
       { name: "Premium", price: 30, billing: "monthly" },
-      { name: "Business", price: 100, billing: "monthly" }
+      { name: "Business", price: 100, billing: "monthly" },
+      { name: "Enterprise", price: 0, billing: "custom" }
     ]
   },
   {
