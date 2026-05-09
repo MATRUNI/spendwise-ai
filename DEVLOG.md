@@ -31,3 +31,19 @@ Now that the UI and data structures are perfect, the math for the Audit Engine i
 
 **Plan for tomorrow:** 
 Build the core `auditEngine.js` logic to analyze the user's stack and calculate specific Monthly and Annual savings based on hardcoded financial rules.
+
+## Day 3 — 2026-05-09
+
+**Hours worked:** 7
+
+**What I did:** 
+Spent a huge amount of time debugging a critical "leads null" bug in Supabase. The problem was related to RLS policies and how I was linking the `audit_id` back to the lead. Successfully fixed it by implementing a robust `upsert` flow. Once the local build was stable, I deployed the entire application to Vercel and it's now live!
+
+**What I learned:** 
+RLS policies in Supabase can be extremely deceptive. I learned that you must explicitly allow `UPDATE` for the `anon` role if you're using `upsert`, even if you're only "inserting" a new email.
+
+**Blockers / what I'm stuck on:** 
+The AI rationale engine is currently broken on production. I'm hitting 404/401 errors with my Anthropic and Gemini API keys. It seems like the production endpoints or keys are being restricted.
+
+**Plan for tomorrow:** 
+Fix the AI rationale engine once and for all. I'll either debug the current keys or switch to a more reliable provider like Groq or OpenAI to ensure users get their personalized insights.
