@@ -9,7 +9,7 @@ const router = createBrowserRouter([
     element: <LandingPage />
   },
   {
-    path: "/results",
+    path: "/results/:id",
     element: <AuditResults />
   }
 ])
