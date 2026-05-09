@@ -18,7 +18,7 @@ ${JSON.stringify(recommendations.map(r => ({
   action: r.action,
   currentSpend: r.currentSpend,
   proposedSpend: r.proposedSpend,
-  reason: r.fallbackRationale // Context for Claude
+  reason: r.fallbackRationale
 })), null, 2)}`;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -27,7 +27,7 @@ ${JSON.stringify(recommendations.map(r => ({
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true' // Required for client-side fetch
+        'anthropic-dangerous-direct-browser-access': 'true'
       },
       body: JSON.stringify({
         model: 'claude-3-haiku-20240307',
@@ -36,28 +36,30 @@ ${JSON.stringify(recommendations.map(r => ({
       })
     });
 
-    const data = await response.json();
-    
-    if (data.error) {
-      console.error("Anthropic API Error:", data.error);
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error("Anthropic API Error:", errorData);
       return recommendations.map(rec => rec.fallbackRationale);
     }
 
+    const data = await response.json();
     const aiText = data.content[0].text;
     
     try {
+       // Clean markdown if present
        let cleanJson = aiText;
-       if (aiText.includes('\`\`\`json')) {
-         cleanJson = aiText.split('\`\`\`json')[1].split('\`\`\`')[0].trim();
-       } else if (aiText.includes('\`\`\`')) {
-         cleanJson = aiText.split('\`\`\`')[1].split('\`\`\`')[0].trim();
+       if (aiText.includes('```json')) {
+         cleanJson = aiText.split('```json')[1].split('```')[0].trim();
+       } else if (aiText.includes('```')) {
+         cleanJson = aiText.split('```')[1].split('```')[0].trim();
        }
+       
        const parsedRationales = JSON.parse(cleanJson);
        
        if (Array.isArray(parsedRationales) && parsedRationales.length === recommendations.length) {
          return parsedRationales;
        } else {
-         throw new Error("Mismatched array length or invalid array");
+         throw new Error("Mismatched array length");
        }
     } catch(e) {
        console.error("Failed to parse AI JSON response. Falling back.", e, aiText);

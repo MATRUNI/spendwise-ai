@@ -1,16 +1,55 @@
 import { useState } from 'react';
 import { Lock, ArrowRight, ShieldCheck } from 'lucide-react';
+import { supabase } from '../utils/supabaseClient';
 import '../styles/LeadCapture.css';
 
-const LeadCapture = ({ onUnlock }) => {
+const LeadCapture = ({ auditId, onUnlock }) => {
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (email) {
-      // Logic for saving to Supabase would go here
-      console.log("Captured lead:", email);
-      onUnlock();
+      setLoading(true);
+      
+      // Use UPSERT to handle both new emails and existing ones gracefully
+      const { data: leadData, error: dbError } = await supabase
+        .from('leads')
+        .upsert([{ email }], { onConflict: 'email' })
+        .select()
+        .single();
+      
+      if (dbError) {
+        console.error("Supabase Leads Error:", dbError.message);
+      }
+      
+      if (leadData && leadData.id && auditId) {
+        // Update the audit record with the lead_id
+        const { error: updateError } = await supabase
+          .from('audits')
+          .update({ lead_id: leadData.id })
+          .eq('id', auditId);
+          
+        if (updateError) {
+          console.error("Supabase Audit Update Error:", updateError.message);
+        }
+      }
+
+      // Send the magic link
+      const { error: authError } = await supabase.auth.signInWithOtp({
+        email,
+        options: {
+          emailRedirectTo: window.location.href
+        }
+      });
+      setLoading(false);
+      
+      if (authError) {
+        console.error("Magic link error", authError);
+        alert("Failed to send magic link: " + authError.message);
+      } else {
+        onUnlock();
+      }
     }
   };
 
@@ -36,8 +75,8 @@ const LeadCapture = ({ onUnlock }) => {
             />
           </div>
 
-          <button type="submit" className="unlock-btn">
-            Get My Free Audit <ArrowRight size={18} />
+          <button type="submit" className="unlock-btn" disabled={loading}>
+            {loading ? "Sending..." : <><ArrowRight size={18} /> Get My Free Audit</>}
           </button>
         </form>
 
