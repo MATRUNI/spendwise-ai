@@ -1,4 +1,3 @@
-import React from 'react';
 import { TrendingDown } from 'lucide-react';
 
 const AuditHero = ({ percentageSaved, totalAnnualSavings }) => {

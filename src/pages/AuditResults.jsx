@@ -50,13 +50,14 @@ const AuditResults = () => {
 
   useEffect(() => {
     if (isUnlocked && report && aiRationales.length === 0 && !isGeneratingAI) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsGeneratingAI(true);
       generateAIRationales(report.recommendations).then(res => {
         setAiRationales(res);
         setIsGeneratingAI(false);
       });
     }
-  }, [isUnlocked, report]);
+  }, [isUnlocked, report, aiRationales.length, isGeneratingAI]);
 
   if (loading) {
     return (
