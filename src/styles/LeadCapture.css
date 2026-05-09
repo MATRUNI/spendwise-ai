@@ -1,0 +1,125 @@
+.lead-capture-overlay {
+  position: absolute;
+  top: 100px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(248, 250, 252, 0.4),
+    rgba(248, 250, 252, 0.9) 80%
+  );
+  backdrop-filter: blur(4px);
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; 
+  padding: 40px 20px;
+}
+
+.lead-capture-card {
+  background: white;
+  padding: 40px;
+  border-radius: 28px;
+  box-shadow: 
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 25px 50px -12px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  max-width: 580px;
+  width: 100%;
+  border: 1px solid #f1f5f9;
+  transform: translateY(-20px);
+}
+
+.lock-icon-wrapper {
+  background: #f5f3ff;
+  color: #6366f1;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+.lead-capture-card h3 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 12px;
+  letter-spacing: -0.02em;
+}
+
+.lead-capture-card p {
+  color: #64748b;
+  line-height: 1.6;
+  margin-bottom: 32px;
+  font-size: 1.05rem;
+}
+
+.lead-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lead-input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 14px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: #f8fafc;
+}
+
+.lead-input:focus {
+  outline: none;
+  border-color: #6366f1;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.unlock-btn {
+  background: #6366f1;
+  color: white;
+  border: none;
+  padding: 18px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+}
+
+.unlock-btn:hover {
+  background: #4f46e5;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -3px rgba(99, 102, 241, 0.4);
+}
+
+.lead-footer {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 480px) {
+  .lead-capture-card {
+    padding: 30px 20px;
+  }
+  
+  .lead-capture-card h3 {
+    font-size: 1.5rem;
+  }
+}
