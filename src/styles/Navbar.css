@@ -1,14 +1,43 @@
-.hero-nav {
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.navbar-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 24px 40px;
-  background: var(--white);
-  border-bottom: 1px solid #e2e8f0;
 }
 
-.logo {
-  font-size: 24px;
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.25rem;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--slate-800);
+}
+
+.logo-icon {
+  background: var(--primary);
+  color: white;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.by-line {
+  font-size: 14px;
+  color: var(--slate-500);
 }
