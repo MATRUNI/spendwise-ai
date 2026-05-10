@@ -12,7 +12,7 @@ const Forms = ({ onAuditComplete }) => {
   const [tools, setTools] = useState(() => {
     const saved = localStorage.getItem('spendwise_tools');
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) { return null; }
+      try { return JSON.parse(saved); } catch { return null; }
     }
     return [{ id: Date.now(), name: 'ChatGPT', plan: 'Plus', spend: '', seats: '', useCase: 'coding' }];
   });

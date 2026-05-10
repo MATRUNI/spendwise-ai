@@ -8,7 +8,7 @@ describe('Audit Engine Logic', () => {
     const result = generateAuditReport(5, tools);
     
     expect(result.recommendations.length).toBeGreaterThan(0);
-    const rec = result.recommendations.find(r => r.toolName === 'Cursor' && r.action === 'cancel');
+    const rec = result.recommendations.find(r => r.toolName === 'Cursor' && r.action === 'Cancel Seats');
     expect(rec).toBeDefined();
     // 5 zombie seats * $20/mo (derived from 200/10) = $100 savings
     expect(rec.savingsMonthly).toBe(100);
@@ -22,7 +22,7 @@ describe('Audit Engine Logic', () => {
     const result = generateAuditReport(3, tools);
     
     expect(result.recommendations.length).toBeGreaterThan(0);
-    const rec = result.recommendations.find(r => r.toolName === 'GitHub Copilot' && r.action === 'downgrade');
+    const rec = result.recommendations.find(r => r.toolName === 'GitHub Copilot' && r.action.includes('Downgrade'));
     expect(rec).toBeDefined();
     // Business is $19, Individual is $10. Saving $9/seat * 3 = $27
     expect(rec.savingsMonthly).toBe(27);
@@ -34,7 +34,7 @@ describe('Audit Engine Logic', () => {
     const result = generateAuditReport(1, tools);
     
     expect(result.recommendations.length).toBeGreaterThan(0);
-    const rec = result.recommendations.find(r => r.toolName === 'Cursor' && r.action === 'switch');
+    const rec = result.recommendations.find(r => r.toolName === 'Cursor' && r.action === 'Switch to Claude/ChatGPT');
     expect(rec).toBeDefined();
   });
 
@@ -44,7 +44,7 @@ describe('Audit Engine Logic', () => {
     const result = generateAuditReport(1, tools);
     
     expect(result.recommendations.length).toBeGreaterThan(0);
-    const rec = result.recommendations.find(r => r.toolName === 'Cursor' && r.action === 'annual');
+    const rec = result.recommendations.find(r => r.toolName === 'Cursor' && r.action === 'Switch to Annual');
     expect(rec).toBeDefined();
     expect(rec.savingsMonthly).toBeGreaterThan(0);
   });
@@ -55,7 +55,7 @@ describe('Audit Engine Logic', () => {
     const result = generateAuditReport(50, tools);
     
     expect(result.recommendations.length).toBeGreaterThan(0);
-    const rec = result.recommendations.find(r => r.toolName === 'Claude' && r.action === 'api');
+    const rec = result.recommendations.find(r => r.toolName === 'Claude' && r.action === 'API Migration');
     expect(rec).toBeDefined();
     // Assume 30% savings on $1000 = $300
     expect(rec.savingsMonthly).toBe(300);

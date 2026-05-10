@@ -21,7 +21,7 @@ const AuditResults = () => {
 
   useEffect(() => {
     const fetchReport = async () => {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('audits')
         .select('audit_results')
         .eq('id', id)
@@ -47,13 +47,15 @@ const AuditResults = () => {
   }, [id]);
 
   useEffect(() => {
-    if (isUnlocked && report && aiRationales.length === 0 && !isGeneratingAI) {
-      setIsGeneratingAI(true);
-      generateAIRationales(report.recommendations, id).then(res => {
+    const triggerAIGeneration = async () => {
+      if (isUnlocked && report && aiRationales.length === 0 && !isGeneratingAI) {
+        setIsGeneratingAI(true);
+        const res = await generateAIRationales(report.recommendations, id);
         setAiRationales(res);
         setIsGeneratingAI(false);
-      });
-    }
+      }
+    };
+    triggerAIGeneration();
   }, [isUnlocked, report, aiRationales.length, isGeneratingAI, id]);
 
   if (loading) {

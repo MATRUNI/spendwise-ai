@@ -11,14 +11,14 @@ export const generateAIRationales = async (recommendations, auditId) => {
   if (!apiKey) return recommendations.map(rec => rec.fallbackRationale);
 
   // 1. Check LocalStorage Cache
-  if (auditId) {
+    if (auditId) {
     const cacheKey = `ai_rat_${auditId}`;
     const cached = localStorage.getItem(cacheKey);
     if (cached) {
       try {
         const parsed = JSON.parse(cached);
         if (parsed.length === recommendations.length) return parsed;
-      } catch(e) { localStorage.removeItem(cacheKey); }
+      } catch { localStorage.removeItem(cacheKey); }
     }
   }
 
@@ -57,7 +57,7 @@ ${JSON.stringify(recommendations.map(r => ({
         }
         return parsedRationales;
       }
-    } catch (err) {
+    } catch {
       continue;
     }
   }
