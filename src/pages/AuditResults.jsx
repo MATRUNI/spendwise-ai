@@ -29,8 +29,6 @@ const AuditResults = () => {
         
       if (data) {
         setReport(data.audit_results);
-      } else {
-        console.error("Failed to fetch report:", error);
       }
       setLoading(false);
     };
@@ -50,14 +48,13 @@ const AuditResults = () => {
 
   useEffect(() => {
     if (isUnlocked && report && aiRationales.length === 0 && !isGeneratingAI) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsGeneratingAI(true);
-      generateAIRationales(report.recommendations).then(res => {
+      generateAIRationales(report.recommendations, id).then(res => {
         setAiRationales(res);
         setIsGeneratingAI(false);
       });
     }
-  }, [isUnlocked, report, aiRationales.length, isGeneratingAI]);
+  }, [isUnlocked, report, aiRationales.length, isGeneratingAI, id]);
 
   if (loading) {
     return (
@@ -114,13 +111,17 @@ const AuditResults = () => {
               ))}
             </div>
             
-            {isUnlocked && report.totalAnnualSavings >= 10000 && (
+            {isUnlocked && report.totalMonthlySavings >= 500 && (
               <CredexCTA totalAnnualSavings={report.totalAnnualSavings} />
             )}
 
             {!isUnlocked && (
               <div className="gate-wrapper">
-                <LeadCapture auditId={id} onUnlock={() => setIsUnlocked(true)} />
+                <LeadCapture 
+                  auditId={id} 
+                  onUnlock={() => setIsUnlocked(true)} 
+                  isOptimized={report.isOptimized} 
+                />
               </div>
             )}
           </div>
@@ -129,6 +130,15 @@ const AuditResults = () => {
             <CheckCircle size={48} color="#10b981" />
             <h3>Your stack is bulletproof!</h3>
             <p>We didn't find any unnecessary spending in your current setup.</p>
+            {!isUnlocked && (
+              <div className="gate-wrapper" style={{ marginTop: '30px' }}>
+                <LeadCapture 
+                  auditId={id} 
+                  onUnlock={() => setIsUnlocked(true)} 
+                  isOptimized={true} 
+                />
+              </div>
+            )}
           </div>
         )}
       </main>

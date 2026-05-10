@@ -3,7 +3,7 @@ import { Lock, ArrowRight, ShieldCheck } from 'lucide-react';
 import { supabase } from '../utils/supabaseClient';
 import '../styles/LeadCapture.css';
 
-const LeadCapture = ({ auditId, onUnlock }) => {
+const LeadCapture = ({ auditId, onUnlock, isOptimized }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -30,9 +30,7 @@ const LeadCapture = ({ auditId, onUnlock }) => {
           .update({ lead_id: leadData.id })
           .eq('id', auditId);
           
-        if (updateError) {
-          console.error("Supabase Audit Update Error:", updateError.message);
-        }
+        if (updateError) return;
       }
 
       // Send the magic link
@@ -60,8 +58,12 @@ const LeadCapture = ({ auditId, onUnlock }) => {
           <Lock size={24} />
         </div>
 
-        <h3>Unlock Your Full Report</h3>
-        <p>Enter your work email to reveal the exact rationale and optimization steps for your AI stack.</p>
+        <h3>{isOptimized ? "Keep Your Stack Optimized" : "Unlock Your Full Report"}</h3>
+        <p>
+          {isOptimized 
+            ? "Your stack looks great! Join our list to get notified when new vendor discounts or cheaper AI alternatives launch."
+            : "Enter your work email to reveal the exact rationale and optimization steps for your AI stack."}
+        </p>
 
         <form className="lead-form" onSubmit={handleSubmit}>
           <div className="input-container">
@@ -76,7 +78,7 @@ const LeadCapture = ({ auditId, onUnlock }) => {
           </div>
 
           <button type="submit" className="unlock-btn" disabled={loading}>
-            {loading ? "Sending..." : <><ArrowRight size={18} /> Get My Free Audit</>}
+            {loading ? "Sending..." : <><ArrowRight size={18} /> {isOptimized ? "Notify Me" : "Get My Free Audit"}</>}
           </button>
         </form>
 

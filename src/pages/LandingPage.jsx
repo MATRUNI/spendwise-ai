@@ -4,11 +4,15 @@ import Hero from '../components/Hero';
 import Forms from '../components/Forms';
 import { generateAuditReport } from '../utils/auditEngine';
 import { supabase } from '../utils/supabaseClient';
+import { useState } from 'react';
+import Loader from '../components/Loader';
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const [isLoading, setIsLoading]=useState(false)
 
   const handleAuditComplete = async (formData) => {
+    setIsLoading(true)
     const report = generateAuditReport(formData.teamSize, formData.tools);
     
     const { data, error } = await supabase
@@ -19,10 +23,8 @@ const LandingPage = () => {
         audit_results: report 
       }])
       .select();
-      
+      setIsLoading(false)
     if (error) {
-      console.error("Supabase insert error:", error);
-      alert("Failed to generate report. Make sure your Supabase connection is valid.");
       return;
     }
     
@@ -30,11 +32,18 @@ const LandingPage = () => {
   };
 
   return (
-    <div className="landing-wrapper">
-      <Navbar />
-      <Hero />
-      <Forms onAuditComplete={handleAuditComplete} />
-    </div>
+      <div className="landing-wrapper">
+        <Navbar /> 
+
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <>
+            <Hero />
+            <Forms onAuditComplete={handleAuditComplete} />
+          </>
+        )}
+      </div>
   );
 };
 

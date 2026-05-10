@@ -12,7 +12,7 @@ const Forms = ({ onAuditComplete }) => {
   const [tools, setTools] = useState(() => {
     const saved = localStorage.getItem('spendwise_tools');
     if (saved) {
-      try { return JSON.parse(saved); } catch (e) { console.error(e); }
+      try { return JSON.parse(saved); } catch (e) { return null; }
     }
     return [{ id: Date.now(), name: 'ChatGPT', plan: 'Plus', spend: '', seats: '', useCase: 'coding' }];
   });
@@ -90,7 +90,7 @@ const Forms = ({ onAuditComplete }) => {
                     <label>Subscription Tier</label>
                     <select value={tool.plan} onChange={(e) => updateTool(tool.id, 'plan', e.target.value)}>
                       {getPlansForTool(tool.name).map(p => (
-                        <option key={p.name} value={p.name}>{p.name}</option>
+                        <option key={`${p.name}-${p.billing}`} value={p.name}>{p.name}</option>
                       ))}
                     </select>
                   </div>
