@@ -47,3 +47,20 @@ The AI rationale engine is currently broken on production. I'm hitting 404/401 e
 
 **Plan for tomorrow:** 
 Fix the AI rationale engine once and for all. I'll either debug the current keys or switch to a more reliable provider like Groq or OpenAI to ensure users get their personalized insights.
+
+## Day 4 — 2026-05-10
+
+**Hours worked:** 6
+
+**What I did:** 
+Complete overhaul of the AI Rationale Engine. Migrated from Anthropic to a self-healing Google Gemini fallback chain (Gemini 2.0 → 1.5 → Gemma) to eliminate 404/429 errors on production. Implemented `localStorage` caching tied to `auditId` for instant reloads and API quota preservation. 
+Added a high-fidelity full-screen Loader component to resolve the "frozen UI" UX issue during analysis. Hardened the codebase for production by stripping all console logs, resolving React key collision warnings in `pricingData.js`, and optimizing font loading (preconnect + display:swap) for Lighthouse. Finalized the CI/CD pipeline by aligning Vitest test assertions with new descriptive UI labels.
+
+**What I learned:** 
+Reliability is better than "smartness" for an MVP. Switching to a robust fallback model chain solved 100% of our production stability issues. I also learned that Lighthouse scores are heavily affected by dev-server overhead; running `npm run preview` is the only way to see the real production performance.
+
+**Blockers / what I'm stuck on:** 
+None! The project is technically complete, stable, and passes all 6 regression tests. Just the UI/UX needs a bit polishing, which I'll do tomorrow
+
+**Plan for tomorrow:** 
+Perform real-world user interviews with 3+ professionals to gather direct quotes and design feedback for the final submission report.
