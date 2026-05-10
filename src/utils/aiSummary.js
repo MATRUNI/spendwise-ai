@@ -1,73 +1,66 @@
-export const generateAIRationales = async (recommendations) => {
-  const apiKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
+const MODEL_CHAIN = [
+  'gemini-2.5-flash',
+  'gemini-2.0-flash',
+  'gemini-flash-latest',
+  'gemma-4-31b-it'
+];
+
+export const generateAIRationales = async (recommendations, auditId) => {
+  const apiKey = import.meta.env.VITE_AI_API_KEY;
   
-  if (!apiKey) {
-    console.warn("No Anthropic API Key found. Falling back to static rationales.");
-    return recommendations.map(rec => rec.fallbackRationale);
+  if (!apiKey) return recommendations.map(rec => rec.fallbackRationale);
+
+  // 1. Check LocalStorage Cache
+  if (auditId) {
+    const cacheKey = `ai_rat_${auditId}`;
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        if (parsed.length === recommendations.length) return parsed;
+      } catch(e) { localStorage.removeItem(cacheKey); }
+    }
   }
 
-  try {
-    const prompt = `You are an expert SaaS auditor. You are analyzing an AI software stack. 
-I will provide a list of recommendations. For each recommendation, write a professional, personalized 2-sentence rationale explaining exactly why the user is wasting money and why they should take the suggested action.
-Do not repeat the raw math in the rationale (we already show that to the user in the UI). Focus on the qualitative business logic (e.g. "Because your team is under 5, enterprise features are unused...").
-Return the output strictly as a JSON array of strings, in the exact same order as the provided recommendations. Do not include any conversational text, only the JSON array.
+  const prompt = `You are an expert SaaS auditor. Analyze this AI software stack and write a professional 2-sentence rationale for each recommendation.
+Focus on qualitative logic, not the math. Return ONLY a JSON array of strings.
 
 Recommendations:
 ${JSON.stringify(recommendations.map(r => ({
   tool: r.toolName,
   action: r.action,
-  currentSpend: r.currentSpend,
-  proposedSpend: r.proposedSpend,
   reason: r.fallbackRationale
 })), null, 2)}`;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: 'claude-3-haiku-20240307',
-        max_tokens: 1024,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Anthropic API Error:", errorData);
-      return recommendations.map(rec => rec.fallbackRationale);
-    }
-
-    const data = await response.json();
-    const aiText = data.content[0].text;
-    
+  // 2. Try the Fallback Chain
+  for (const modelId of MODEL_CHAIN) {
     try {
-       // Clean markdown if present
-       let cleanJson = aiText;
-       if (aiText.includes('```json')) {
-         cleanJson = aiText.split('```json')[1].split('```')[0].trim();
-       } else if (aiText.includes('```')) {
-         cleanJson = aiText.split('```')[1].split('```')[0].trim();
-       }
-       
-       const parsedRationales = JSON.parse(cleanJson);
-       
-       if (Array.isArray(parsedRationales) && parsedRationales.length === recommendations.length) {
-         return parsedRationales;
-       } else {
-         throw new Error("Mismatched array length");
-       }
-    } catch(e) {
-       console.error("Failed to parse AI JSON response. Falling back.", e, aiText);
-       return recommendations.map(rec => rec.fallbackRationale);
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelId}:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { responseMimeType: "application/json" }
+        })
+      });
+
+      if (!response.ok) continue;
+
+      const data = await response.json();
+      const aiResponse = data.candidates[0].content.parts[0].text;
+      
+      const parsedRationales = JSON.parse(aiResponse);
+      if (Array.isArray(parsedRationales) && parsedRationales.length === recommendations.length) {
+        // 3. Cache the success
+        if (auditId) {
+          localStorage.setItem(`ai_rat_${auditId}`, JSON.stringify(parsedRationales));
+        }
+        return parsedRationales;
+      }
+    } catch (err) {
+      continue;
     }
-    
-  } catch (err) {
-    console.error("Error calling Anthropic API:", err);
-    return recommendations.map(rec => rec.fallbackRationale);
   }
+
+  return recommendations.map(rec => rec.fallbackRationale);
 };
