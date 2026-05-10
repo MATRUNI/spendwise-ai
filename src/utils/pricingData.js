@@ -29,7 +29,6 @@ export const AI_TOOLS = [
       { name: "Max", price: 100, billing: "monthly" },
       { name: "Team (Standard)", price: 20, billing: "monthly" },
       { name: "Team (Premium)", price: 100, billing: "monthly" },
-      { name: "Enterprise", price: 20, billing: "monthly" },
       { name: "Enterprise", price: 0, billing: "custom" }
     ]
   },

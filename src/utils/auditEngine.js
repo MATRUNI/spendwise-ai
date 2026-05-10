@@ -22,7 +22,7 @@ export const generateAuditReport = (globalTeamSize, userTools) => {
       recommendations.push({
         toolId: tool.id,
         toolName: tool.name,
-        action: 'cancel',
+        action: 'Cancel Seats',
         savingsMonthly: savings,
         currentSpend: spend,
         proposedSpend: spend - savings,
@@ -43,7 +43,7 @@ export const generateAuditReport = (globalTeamSize, userTools) => {
         recommendations.push({
           toolId: tool.id,
           toolName: tool.name,
-          action: 'downgrade',
+          action: `Downgrade to ${proPlan.name}`,
           savingsMonthly: savings,
           currentSpend: spend,
           proposedSpend: proPlan.price * seats,
@@ -62,12 +62,12 @@ export const generateAuditReport = (globalTeamSize, userTools) => {
         recommendations.push({
           toolId: tool.id,
           toolName: tool.name,
-          action: 'switch',
+          action: 'Switch to Claude/ChatGPT',
           savingsMonthly: savings,
           currentSpend: spend,
           proposedSpend: 20 * seats,
           seats: seats,
-          fallbackRationale: `You are paying a premium of $${spend.toFixed(2)}/mo for ${tool.name}, an IDE optimized specifically for complex software engineering. However, your stated primary use case is '${tool.useCase}'. Switching your ${seats} seat(s) to a general-purpose frontier model like Claude Pro or ChatGPT Plus ($20/seat) will cost only $${(20 * seats).toFixed(2)}/mo. This provides superior natural language capabilities for your use case and instantly saves you $${savings.toFixed(2)}/mo.`
+          fallbackRationale: `You are paying a premium of $${spend.toFixed(2)}/mo for ${tool.name}, an IDE optimized specifically for software engineering. Switching your ${seats} seat(s) to a general-purpose model like Claude Pro or ChatGPT Plus ($20/seat) will save you $${savings.toFixed(2)}/mo.`
         });
       }
     }
@@ -82,12 +82,12 @@ export const generateAuditReport = (globalTeamSize, userTools) => {
          recommendations.push({
             toolId: tool.id,
             toolName: tool.name,
-            action: 'annual',
+            action: 'Switch to Annual',
             savingsMonthly: savings,
             currentSpend: spend,
             proposedSpend: annualPlan.price * seats,
             seats: seats,
-            fallbackRationale: `You are currently paying the standard monthly retail rate of $${spend.toFixed(2)}/mo for ${tool.name} ${tool.plan}. By committing to the equivalent Annual plan at $${annualPlan.price}/seat, your effective monthly cost drops to $${(annualPlan.price * seats).toFixed(2)}/mo. This simple billing toggle yields guaranteed savings of $${savings.toFixed(2)}/mo ($${(savings * 12).toFixed(2)}/year) without changing your tech stack.`
+            fallbackRationale: `By committing to the equivalent Annual plan at $${annualPlan.price}/seat, your effective monthly cost drops to $${(annualPlan.price * seats).toFixed(2)}/mo, saving you $${savings.toFixed(2)}/mo.`
          });
        }
     }
@@ -97,17 +97,86 @@ export const generateAuditReport = (globalTeamSize, userTools) => {
         recommendations.push({
             toolId: tool.id,
             toolName: tool.name,
-            action: 'api',
+            action: 'API Migration',
             savingsMonthly: savings,
             currentSpend: spend,
             proposedSpend: spend - savings,
             seats: seats,
-            fallbackRationale: `You are paying full retail subscription pricing for a massive deployment of ${seats} ${tool.name} seats ($${spend.toFixed(2)}/mo). At this scale (>30 seats), per-seat retail licenses are highly inefficient. We recommend migrating power users to ${tool.name} API direct (via a custom UI or LibreChat) or negotiating an Enterprise volume agreement. Based on industry benchmarks, this reduces consumption costs by an average of 30%, which returns approximately $${savings.toFixed(2)}/mo to your bottom line.`
+            fallbackRationale: `At this scale (>30 seats), we recommend migrating to ${tool.name} API direct or negotiating an Enterprise agreement to save approximately 30% ($${savings.toFixed(2)}/mo).`
+        });
+    }
+
+    // RULE 5: High-Spend API Optimization (Credits)
+    if (monthlySavingsForTool === 0 && tool.name.toLowerCase().includes('api') && spend > 500) {
+        const savings = spend * 0.5; // Credits usually cover 50-100%
+        monthlySavingsForTool += savings;
+        recommendations.push({
+            toolId: tool.id,
+            toolName: tool.name,
+            action: 'Apply for Credits',
+            savingsMonthly: savings,
+            currentSpend: spend,
+            proposedSpend: spend - savings,
+            seats: seats,
+            fallbackRationale: `You could qualify for AWS/Azure credits to offset your $${spend.toFixed(2)}/mo API spend by at least 50%.`
+        });
+    }
+
+    // RULE 6: Cheaper Alternative Tool (e.g. Writing/General Case)
+    if (monthlySavingsForTool === 0 && tool.name === 'ChatGPT' && tool.plan === 'Plus' && tool.useCase === 'writing') {
+        const savings = 20; // Switch to Claude Free
+        monthlySavingsForTool += savings;
+        recommendations.push({
+            toolId: tool.id,
+            toolName: tool.name,
+            action: 'Switch to Claude Free',
+            savingsMonthly: savings,
+            currentSpend: spend,
+            proposedSpend: 0,
+            seats: seats,
+            fallbackRationale: `For writing use cases, Claude's free tier often provides superior results, saving you $20/mo.`
         });
     }
 
     totalMonthlySavings += monthlySavingsForTool;
   });
+
+  // RULE 7: Multi-tool Redundancy (Cursor + Copilot)
+  const hasCursor = userTools.find(t => t.name === 'Cursor');
+  const hasCopilot = userTools.find(t => t.name === 'GitHub Copilot');
+  if (hasCursor && hasCopilot) {
+    const copilotSpend = parseFloat(hasCopilot.spend) || 0;
+    totalMonthlySavings += copilotSpend;
+    recommendations.push({
+        toolId: hasCopilot.id,
+        toolName: 'GitHub Copilot',
+        action: 'Cancel Redundant Tool',
+        savingsMonthly: copilotSpend,
+        currentSpend: copilotSpend,
+        proposedSpend: 0,
+        seats: hasCopilot.seats,
+        fallbackRationale: `You are paying for both Cursor and GitHub Copilot. Since Cursor is an IDE that already includes advanced autocomplete and chat features (powered by the same or better models), GitHub Copilot is 100% redundant. We recommend canceling your Copilot subscription to save $${copilotSpend.toFixed(2)}/mo.`
+    });
+  }
+
+  // RULE 8: Frontier Model Consolidation (ChatGPT + Claude)
+  const hasChatGPT = userTools.find(t => t.name === 'ChatGPT' && (t.plan === 'Plus' || t.plan === 'Pro'));
+  const hasClaude = userTools.find(t => t.name === 'Claude' && (t.plan === 'Pro' || t.plan === 'Plus'));
+  if (hasChatGPT && hasClaude && globalTeamSize < 10) {
+    const cheaperSpend = Math.min(parseFloat(hasChatGPT.spend), parseFloat(hasClaude.spend));
+    const toolToCancel = parseFloat(hasChatGPT.spend) < parseFloat(hasClaude.spend) ? 'ChatGPT' : 'Claude';
+    totalMonthlySavings += cheaperSpend;
+    recommendations.push({
+        toolId: toolToCancel === 'ChatGPT' ? hasChatGPT.id : hasClaude.id,
+        toolName: toolToCancel,
+        action: 'Consolidate Frontier Models',
+        savingsMonthly: cheaperSpend,
+        currentSpend: cheaperSpend,
+        proposedSpend: 0,
+        seats: 1,
+        fallbackRationale: `You are paying for both ChatGPT Plus and Claude Pro. For teams under 10, having both frontier models is often overkill. We recommend consolidating onto one (Claude for better prose/coding or ChatGPT for multi-modality) to save $${cheaperSpend.toFixed(2)}/mo.`
+    });
+  }
 
   const percentageSaved = totalCurrentSpend > 0 ? ((totalMonthlySavings / totalCurrentSpend) * 100) : 0;
 
