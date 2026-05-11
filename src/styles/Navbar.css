@@ -24,6 +24,7 @@
   font-size: 1.25rem;
   font-weight: 800;
   color: var(--slate-800);
+  cursor: pointer;
 }
 
 .logo-icon {
@@ -41,4 +42,15 @@
 .by-line {
   font-size: 14px;
   color: var(--slate-500);
+}
+
+.founder-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s, text-shadow 0.2s;
+}
+
+.founder-link:hover {
+  color: var(--primary);
+  text-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
 }
