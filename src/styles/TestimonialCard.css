@@ -7,7 +7,7 @@
 
 .testimonial-carousel {
   position: relative;
-  min-height: 280px; /* Prevent layout jump */
+  min-height: 280px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -38,7 +38,7 @@
   transform: translateX(0) scale(1);
   pointer-events: auto;
   visibility: visible;
-  position: relative; /* Take up space when active */
+  position: relative;
 }
 
 .testimonial-card:hover {
@@ -116,9 +116,13 @@
   .testimonial-text {
     font-size: 1.05rem;
   }
+  .testimonial-card{
+    margin: 10px;
+  }
   .testimonial-carousel {
     min-height: 320px;
   }
+
   .testimonial-card {
     padding: 32px 24px;
   }
