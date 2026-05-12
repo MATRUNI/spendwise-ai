@@ -70,4 +70,43 @@ describe('Audit Engine Logic', () => {
     
     expect(result.totalMonthlySavings).toBeGreaterThan(0);
   });
+
+  it('Rule 7: Detects Redundancy (Cursor + GitHub Copilot)', () => {
+    const tools = [
+      { id: '1', name: 'Cursor', plan: 'Pro', spend: 20, seats: 1, useCase: 'Coding' },
+      { id: '2', name: 'GitHub Copilot', plan: 'Individual', spend: 10, seats: 1, useCase: 'Coding' }
+    ];
+    const result = generateAuditReport(1, tools);
+    
+    const rec = result.recommendations.find(r => r.toolName === 'GitHub Copilot' && r.action === 'Cancel Redundant Tool');
+    expect(rec).toBeDefined();
+    expect(result.totalMonthlySavings).toBeGreaterThanOrEqual(10);
+  });
+
+  it('Rule 8: Frontier Model Consolidation (ChatGPT + Claude)', () => {
+    const tools = [
+      { id: '1', name: 'ChatGPT', plan: 'Plus', spend: 20, seats: 1, useCase: 'Mixed' },
+      { id: '2', name: 'Claude', plan: 'Pro', spend: 20, seats: 1, useCase: 'Mixed' }
+    ];
+    const result = generateAuditReport(1, tools); // Team size < 10
+    
+    const rec = result.recommendations.find(r => r.action === 'Consolidate Frontier Models');
+    expect(rec).toBeDefined();
+    expect(result.totalMonthlySavings).toBe(20);
+  });
+
+  it('Edge Case: Handles Empty Tool Stack', () => {
+    const result = generateAuditReport(10, []);
+    expect(result.totalCurrentSpend).toBe(0);
+    expect(result.totalMonthlySavings).toBe(0);
+    expect(result.recommendations.length).toBe(0);
+  });
+
+  it('Edge Case: Handles Zero Team Size (Defaults to Tool Seats)', () => {
+    const tools = [{ name: 'Cursor', plan: 'Pro (Yearly)', spend: 16, seats: 1, useCase: 'Coding' }];
+    const result = generateAuditReport(0, tools);
+    // Should NOT trigger zombie seats if team size is 0 (assumes 1)
+    // And should NOT trigger Annual discount because it is already Yearly
+    expect(result.totalMonthlySavings).toBe(0);
+  });
 });
