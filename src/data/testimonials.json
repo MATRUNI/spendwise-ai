@@ -4,5 +4,23 @@
     "quote": "I found this app to be good for anyone struggling to track their AI costs. It is a helpful tool for managing both subscriptions and usage-based expenses in one place. Overall, it is a good startup that addresses our expenditures.",
     "author": "Lokesh Mawar",
     "role": "FSD, Consult Quark"
+  },
+  {
+    "id": 2,
+    "quote": "Spendwise AI is a perfect example of solving a modern problem with a clean, low-friction UX. The way it identifies 'Zombie Seats' is something every growing startup needs to stay lean.",
+    "author": "Vaibhav Tripathi",
+    "role": "Mentor, PW Skills"
+  },
+  {
+    "id": 3,
+    "quote": "I built Spendwise AI to solve the 'Subscription Spaghetti' problem. Our mission is to give founders and engineers the data they need to justify every dollar spent on AI tooling.",
+    "author": "Himanshu Yadav",
+    "role": "Creator & Lead Engineer"
+  },
+  {
+    "id": 4,
+    "quote": "The 'Wise Engine' logic is incredibly sharp. It's rare to see a student project handle complex financial edge cases with this much accuracy. Highly recommended for any professional team.",
+    "author": "Deepak Sir",
+    "role": "Founder & Professional Critic"
   }
 ]
