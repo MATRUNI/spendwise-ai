@@ -15,7 +15,7 @@ const TestimonialCard = () => {
     }, 5000);
 
     return () => clearInterval(timer);
-  }, [isPaused, testimonials.length]);
+  }, [isPaused]);
 
   return (
     <div 
