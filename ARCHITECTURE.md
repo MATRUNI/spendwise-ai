@@ -1,4 +1,4 @@
-# Spendwise AI Architecture
+# 🏗️ Spendwise AI Architecture
 
 This document outlines the technical architecture of Spendwise AI and the rationale behind key engineering decisions made during the build.
 
@@ -8,15 +8,17 @@ This document outlines the technical architecture of Spendwise AI and the ration
 3. [Technical Decisions & Rationale](#3-technical-decisions--rationale)
 4. [Data Flow: The "Audit to Lead" Funnel](#4-data-flow-the-audit-to-lead-funnel)
 5. [Key Security Features](#5-key-security-features)
+6. [Future Scalability (Phase 2)](#6-future-scalability-phase-2)
 
 ---
 
 ## 1. High-Level System Design
 Spendwise AI is a "Zero-Knowledge" SaaS audit platform. The core architecture is designed for **instant gratification**—users get value before they even sign up.
+
 ```mermaid
 graph TD
     A[User Inputs AI Stack] --> B{Audit Engine}
-    B -->|Local Math| C[Optimized Results]
+    B -->|Local Math| C[Unoptimized Results]
     C --> D[Lead Capture Form]
     D -->|Supabase Upsert| E[Unlock Full Report]
     E --> F{AI Rationale Chain}
@@ -58,15 +60,15 @@ erDiagram
 
 ## 3. Technical Decisions & Rationale
 
-### Why JavaScript (ES6+) over TypeScript?
+### 🧩 Why JavaScript (ES6+) over TypeScript?
 *   **Decision**: Opted for pure JS with modern ES6 syntax.
 *   **Rationale**: For a rapid MVP build, development velocity is the priority. As the sole developer, the overhead of defining complex interfaces for a rapidly evolving data structure (like the tool pricing array) was a friction point. I chose **comfort and speed** to ensure a stable, bug-free deployment on time.
 
-### Why Google Gemini over Anthropic Claude?
+### 🧠 Why Google Gemini over Anthropic Claude?
 *   **Decision**: Migrated from Claude 3 Haiku to the Gemini 2.0/1.5 Flash fallback chain.
-*   **Rationale**: While Claude provides excellent reasoning, the API is credit-restricted and requires upfront payment. As an indie developer, **Google Gemini’s generous free tier and flexibility** (especially for high-volume requests during testing) made it the superior choice for a $0-budget project. It allowed us to implement a "Self-Healing" chain (Gemini 2.0 -> 1.5 -> Gemma) to ensure 100% uptime.
+*   **Rationale**: While Claude provides excellent reasoning, the API is credit-restricted and requires upfront payment. As an indie developer, **Google Gemini’s generous free tier and flexibility** made it the superior choice for a $0-budget project. It allowed us to implement a "Self-Healing" chain (Gemini 2.0 -> 1.5 -> Gemma) to ensure 100% uptime.
 
-### The Mailer Strategy (Resend vs. Supabase)
+### 📧 The Mailer Strategy (Resend vs. Supabase)
 *   **Decision**: Integrated Resend via SMTP but kept Supabase Default as a fallback.
 *   **Rationale**: We integrated **Resend** to provide a premium, branded B2B email experience. However, since transactional mailers require a verified root domain (DNS records) to send to third-party emails, we operate in "Sandbox Mode" for this version. This allows us to demonstrate a professional integration for the project submission while respecting the financial constraint of not purchasing a domain for a weekend prototype.
 
@@ -86,3 +88,12 @@ The app uses a unique **"Blur-to-Capture"** flow to maximize conversion:
 *   **Zero-Knowledge**: We do not use OAuth or Bank APIs. This eliminates 99% of the security risk and 100% of the user friction.
 *   **RLS (Row Level Security)**: Supabase policies ensure that an anonymous user can only read an audit if they have the specific UUID.
 *   **Environment Safety**: All API keys are proxied via Vite environment variables to prevent accidental exposure.
+
+---
+
+## 6. Future Scalability (Phase 2)
+If this were to move to production:
+*   **Migration to TS**: For a team of 3+, we would move the `auditEngine` to TypeScript to prevent prop-drilling errors.
+*   **Domain Verification**: Adding a custom `.ai` domain to Resend to move out of the Sandbox.
+*   **Browser Extension**: Implementing a "Shadow IT" scanner to automatically detect AI spend without manual entry.
+*   **Historical Trend Tracking**: Based on early user feedback (Lokesh Mawar, Consult Quark), we plan to implement a time-series database to track spend trends over 6-12 months, allowing founders to spot "usage spikes" before the bill arrives.
