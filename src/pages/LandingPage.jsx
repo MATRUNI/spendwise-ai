@@ -6,6 +6,7 @@ import { generateAuditReport } from '../utils/auditEngine';
 import { supabase } from '../utils/supabaseClient';
 import { useState } from 'react';
 import Loader from '../components/Loader';
+import TestimonialCard from '../components/TestimonialCard';
 
 const LandingPage = () => {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ const LandingPage = () => {
         ) : (
           <>
             <Hero />
+            <TestimonialCard />
             <Forms onAuditComplete={handleAuditComplete} />
           </>
         )}

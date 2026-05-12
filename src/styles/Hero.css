@@ -1,5 +1,5 @@
 .hero-section {
-  padding: 100px 20px 40px;
+  padding: 100px 0;
   text-align: center;
 }
 
@@ -52,4 +52,13 @@
   max-width: 550px;
   margin: 0 auto;
   line-height: 1.6;
+}
+@media (max-width: 500px) {
+  .hero-section {
+    padding: 60px 20px;
+  }
+  .hero-title {
+    font-size: 2.5rem;
+    line-height: 1.1;
+  }
 }

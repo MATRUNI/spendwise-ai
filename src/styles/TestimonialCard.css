@@ -1,0 +1,125 @@
+.testimonial-section {
+  max-width: 800px;
+  min-height: 200px;
+  margin: 0 auto 64px auto;
+  position: relative;
+}
+
+.testimonial-carousel {
+  position: relative;
+  min-height: 280px; /* Prevent layout jump */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.testimonial-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateX(30px) scale(0.95);
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.testimonial-card.active {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  pointer-events: auto;
+  visibility: visible;
+  position: relative; /* Take up space when active */
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 20px 40px -10px rgba(99, 102, 241, 0.15);
+  border-color: var(--primary);
+}
+
+.quote-icon {
+  color: var(--primary);
+  opacity: 0.2;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.testimonial-text {
+  font-size: 1.25rem;
+  color: var(--slate-700);
+  line-height: 1.6;
+  font-style: italic;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.author-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.author-info strong {
+  color: var(--slate-900);
+  font-size: 1.1rem;
+}
+
+.author-info span {
+  color: var(--slate-500);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Pagination Dots */
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--slate-300);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.dot.active {
+  background: var(--primary);
+  width: 24px;
+  border-radius: 10px;
+}
+
+@media (max-width: 640px) {
+  .testimonial-text {
+    font-size: 1.05rem;
+  }
+  .testimonial-carousel {
+    min-height: 320px;
+  }
+  .testimonial-card {
+    padding: 32px 24px;
+  }
+}
